@@ -18,7 +18,23 @@ object `is-terminal` extends JavaModule with PublishModule {
       Developer("alexarchambault", "Alex Archambault", "https://github.com/alexarchambault")
     )
   )
-  def publishVersion = VcsVersion.vcsState().format()
+  def publishVersion = T {
+    val value = VcsVersion.vcsState().format()
+    if (value.contains("-")) {
+      val value0 = value.takeWhile(_ != '-')
+      val lastDotIdx = value0.lastIndexOf('.')
+      if (lastDotIdx < 0) value0 + "-SNAPSHOT"
+      else
+        value0.drop(lastDotIdx + 1).toIntOption match {
+          case Some(lastNum) =>
+            val prefix = value0.take(lastDotIdx)
+            s"$prefix.${lastNum + 1}-SNAPSHOT"
+          case None =>
+            value0 + "-SNAPSHOT"
+        }
+    }
+    else value
+  }
 
   def javacOptions = super.javacOptions() ++ Seq(
     "--release", "8"
