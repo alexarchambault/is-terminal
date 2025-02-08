@@ -5,7 +5,11 @@ import mill._
 import mill.scalalib._
 import mill.scalalib.publish._
 
-object jdk22 extends JavaModule
+object jdk22 extends JavaModule {
+  def javacOptions = super.javacOptions() ++ Seq(
+    "--release", "22"
+  )
+}
 
 object `is-terminal` extends JavaModule with PublishModule {
   def pomSettings = PomSettings(
