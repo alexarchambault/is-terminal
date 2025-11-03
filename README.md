@@ -15,14 +15,14 @@ Doesn't use reflection, but relies on a multi-release JAR instead
 #### Scala CLI
 
 ```scala
-// using dep io.github.alexarchambault:is-terminal:0.1.1
+// using dep io.github.alexarchambault:is-terminal:0.1.2
 ```
 
 #### Mill
 
 ```scala
-def ivyDeps = Agg(
-  ivy"io.github.alexarchambault:is-terminal:0.1.1"
+def mvnDeps = Seq(
+  mvn"io.github.alexarchambault:is-terminal:0.1.2"
 )
 ```
 
