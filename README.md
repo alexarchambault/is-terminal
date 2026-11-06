@@ -72,3 +72,22 @@ import io.github.alexarchambault.isterminal.IsTerminal
 
 val useColors = IsTerminal.isTerminal() && !sys.env.contains("NO_COLOR")
 ```
+
+### What counts as a terminal
+
+`IsTerminal.isTerminal()` returns `true` only if both standard input and standard output
+are attached to a terminal:
+
+| Command | Result |
+| --- | --- |
+| `app` | `true` |
+| `app > out.txt` | `false` |
+| `app \| less` | `false` |
+| `app < in.txt` | `false` |
+| `app 2> err.txt` | `true` |
+
+Standard error isn't taken into account. So if you write progress output to stderr,
+`isTerminal()` can't tell whether stderr itself is redirected.
+
+Under the hood, on Java 8 to 21 it checks `System.console() != null`. On Java 22 and later,
+it also checks `System.console().isTerminal()`.
