@@ -55,8 +55,20 @@ libraryDependencies += "io.github.alexarchambault" % "is-terminal" % "0.1.2"
 
 ### API
 
+The library exposes a single method, `IsTerminal.isTerminal()`. A typical use is to only
+enable colors, progress bars or interactive prompts when a user is actually looking at
+the output:
+
 ```java
-if (io.github.alexarchambault.isterminal.IsTerminal.isTerminal()) {
-  // We're running with an actual terminal
-}
+import io.github.alexarchambault.isterminal.IsTerminal;
+
+boolean useColors = IsTerminal.isTerminal() && System.getenv("NO_COLOR") == null;
+```
+
+From Scala:
+
+```scala
+import io.github.alexarchambault.isterminal.IsTerminal
+
+val useColors = IsTerminal.isTerminal() && !sys.env.contains("NO_COLOR")
 ```
