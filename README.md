@@ -118,3 +118,7 @@ $ ./mill __.publishLocal
 ```
 
 Releases are published to Maven Central by CI when a tag is pushed.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
