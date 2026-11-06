@@ -26,6 +26,28 @@ def mvnDeps = Seq(
 )
 ```
 
+#### Maven
+
+```xml
+<dependency>
+  <groupId>io.github.alexarchambault</groupId>
+  <artifactId>is-terminal</artifactId>
+  <version>0.1.2</version>
+</dependency>
+```
+
+#### Gradle
+
+```kotlin
+implementation("io.github.alexarchambault:is-terminal:0.1.2")
+```
+
+#### sbt
+
+```scala
+libraryDependencies += "io.github.alexarchambault" % "is-terminal" % "0.1.2"
+```
+
 ### API
 
 ```java
