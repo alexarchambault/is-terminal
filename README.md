@@ -104,3 +104,17 @@ up if the JAR's manifest has `Multi-Release: true`. If you repackage is-terminal
 `META-INF/versions/22` entries and the `Multi-Release: true` manifest attribute. Otherwise, the
 Java 8 implementation is used on all JVMs, and on Java 22 and later `isTerminal()` can return
 `true` even when the output is redirected.
+
+## Building
+
+is-terminal is built with [Mill](https://mill-build.org), using the `./mill` launcher at the
+root of the repository. Building it requires JDK 22 or later, as the Java 22 implementation
+is compiled with `--release 22` (the main implementation is compiled with `--release 8`).
+
+Compile everything, and publish it locally:
+
+```text
+$ ./mill __.publishLocal
+```
+
+Releases are published to Maven Central by CI when a tag is pushed.
