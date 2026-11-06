@@ -1,5 +1,9 @@
 # is-terminal
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexarchambault/is-terminal.svg)](https://central.sonatype.com/artifact/io.github.alexarchambault/is-terminal)
+[![javadoc](https://javadoc.io/badge2/io.github.alexarchambault/is-terminal/javadoc.svg)](https://javadoc.io/doc/io.github.alexarchambault/is-terminal)
+[![CI](https://github.com/alexarchambault/is-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/alexarchambault/is-terminal/actions/workflows/ci.yml)
+
 Tiny Java library to know whether the current app runs in an actual terminal or not.
 
 Checking `System.console() != null` used to be the standard way to do that. But since
