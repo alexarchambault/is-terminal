@@ -1,4 +1,4 @@
-## is-terminal
+# is-terminal
 
 Tiny Java library to know whether the current app runs in an actual terminal or not
 
@@ -8,9 +8,9 @@ JVM version agnostic
 
 Doesn't use reflection, but relies on a multi-release JAR instead
 
-## How to use
+## Usage
 
-## Add dependency
+### Add dependency
 
 #### Scala CLI
 
@@ -26,7 +26,7 @@ def mvnDeps = Seq(
 )
 ```
 
-## API
+### API
 
 ```java
 if (io.github.alexarchambault.isterminal.IsTerminal.isTerminal()) {
