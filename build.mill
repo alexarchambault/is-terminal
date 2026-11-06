@@ -1,9 +1,12 @@
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.1`
+//| mill-version: 1.4.0-M2
+//| mill-jvm-opts: ["-Xmx2g"]
 
-import de.tobiasroeser.mill.vcs.version.VcsVersion
-import mill._
-import mill.scalalib._
-import mill.scalalib.publish._
+package build
+
+import mill.*
+import mill.javalib.*
+import mill.javalib.publish.*
+import mill.util.VcsVersion
 
 object jdk22 extends JavaModule {
   def javacOptions = super.javacOptions() ++ Seq(
@@ -22,7 +25,7 @@ object `is-terminal` extends JavaModule with PublishModule {
       Developer("alexarchambault", "Alex Archambault", "https://github.com/alexarchambault")
     )
   )
-  def publishVersion = T {
+  def publishVersion = Task {
     val value = VcsVersion.vcsState().format()
     if (value.contains("-")) {
       val value0 = value.takeWhile(_ != '-')
@@ -44,18 +47,18 @@ object `is-terminal` extends JavaModule with PublishModule {
     "--release", "8"
   )
 
-  def jdk22ClassesResources = T {
-    val destDir = T.dest / "META-INF/versions/22"
+  def jdk22ClassesResources = Task {
+    val destDir = Task.dest / "META-INF/versions/22"
     os.makeDir.all(destDir)
     for (elem <- os.list(jdk22.compile().classes.path))
       os.copy(elem, destDir / elem.last)
-    PathRef(T.dest)
+    PathRef(Task.dest)
   }
 
-  def resources = T {
-    T.sources(super.resources() ++ Seq(jdk22ClassesResources()))
+  def resources = Task {
+    super.resources() ++ Seq(jdk22ClassesResources())
   }
-  def manifest = T {
+  def manifest = Task {
     super.manifest().add("Multi-Release" -> "true")
   }
 }
