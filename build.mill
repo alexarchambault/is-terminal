@@ -6,7 +6,6 @@ package build
 import mill.*
 import mill.javalib.*
 import mill.javalib.publish.*
-import mill.util.VcsVersion
 
 object jdk22 extends JavaModule {
   def javacOptions = super.javacOptions() ++ Seq(
@@ -26,21 +25,12 @@ object `is-terminal` extends JavaModule with PublishModule {
     )
   )
   def publishVersion = Task {
-    val value = VcsVersion.vcsState().format()
-    if (value.contains("-")) {
-      val value0 = value.takeWhile(_ != '-')
-      val lastDotIdx = value0.lastIndexOf('.')
-      if (lastDotIdx < 0) value0 + "-SNAPSHOT"
-      else
-        value0.drop(lastDotIdx + 1).toIntOption match {
-          case Some(lastNum) =>
-            val prefix = value0.take(lastDotIdx)
-            s"$prefix.${lastNum + 1}-SNAPSHOT"
-          case None =>
-            value0 + "-SNAPSHOT"
-        }
-    }
-    else value
+    computePublishVersion()
+  }
+
+  // Almost empty javadoc JAR (only a manifest), Maven Central just requires one to be there
+  def docJar = Task {
+    PathRef(mill.util.Jvm.createJar(Task.dest / "out.jar", Seq.empty))
   }
 
   def javacOptions = super.javacOptions() ++ Seq(
@@ -60,5 +50,32 @@ object `is-terminal` extends JavaModule with PublishModule {
   }
   def manifest = Task {
     super.manifest().add("Multi-Release" -> "true")
+  }
+}
+
+/** Version deduced from the "v*" git tags: the tag value (minus "v") if HEAD has such a tag,
+  * else the latest such tag, keeping only its first 3 '.'-separated elements, with its last
+  * element incremented, and a "-SNAPSHOT" suffix
+  */
+def computePublishVersion = Task.Input {
+  def git(args: String*): Seq[String] =
+    os.proc("git", args)
+      .call(cwd = mill.api.BuildCtx.workspaceRoot, check = false, stderr = os.Pipe)
+      .out
+      .lines()
+      .map(_.trim)
+      .filter(_.nonEmpty)
+
+  val headTagVersions = git("tag", "--points-at", "HEAD")
+    .filter(_.startsWith("v"))
+    .map(_.stripPrefix("v"))
+
+  headTagVersions.headOption.getOrElse {
+    val latestTag = git("describe", "--tags", "--abbrev=0", "--match", "v*").headOption
+      .getOrElse(sys.error("No 'v*' git tag found, cannot compute version"))
+    val elems = latestTag.stripPrefix("v").split('.').toSeq.take(3)
+    val lastNum = elems.last.toIntOption
+      .getOrElse(sys.error(s"Cannot compute version from tag $latestTag"))
+    (elems.init :+ (lastNum + 1).toString).mkString(".") + "-SNAPSHOT"
   }
 }
