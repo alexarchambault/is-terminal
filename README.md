@@ -91,3 +91,12 @@ Standard error isn't taken into account. So if you write progress output to stde
 
 Under the hood, on Java 8 to 21 it checks `System.console() != null`. On Java 22 and later,
 it also checks `System.console().isTerminal()`.
+
+### Fat JARs and shading
+
+The Java 22 implementation lives under `META-INF/versions/22` in the JAR, and is only picked
+up if the JAR's manifest has `Multi-Release: true`. If you repackage is-terminal in a fat JAR
+(assembly, shading, etc.), make sure that the resulting JAR keeps both the
+`META-INF/versions/22` entries and the `Multi-Release: true` manifest attribute. Otherwise, the
+Java 8 implementation is used on all JVMs, and on Java 22 and later `isTerminal()` can return
+`true` even when the output is redirected.
